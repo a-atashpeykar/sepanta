@@ -4,19 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class AdminProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Product $product): Factory|View|Application
+    public function index(Product $product)
     {
-        return view('product.index',[
+        return view('admin.product.index',[
             'products' => $product->all()
         ]);
     }
@@ -32,19 +29,21 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store()
+    public function store(ProductRequest $productRequest)
     {
+        Product::create([
+            'name' => $productRequest->productAllowedInputs()['productName']
+        ]);
 
+        return redirect()->route('product.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(string $id)
     {
-        return view('product.detail',[
-            'product' => $product
-        ]);
+        //
     }
 
     /**
@@ -52,15 +51,21 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        return view('admin.product.editProduct',[
+            'product' => $product
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $productRequest, Product $product)
     {
-        //
+        $product->update([
+            'name' => $productRequest->productAllowedInputs()['productName']
+        ]);
+
+        return redirect()->route('product.edit',[$product]);
     }
 
     /**
@@ -68,6 +73,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->forceDelete();
+        return redirect()->route('product.index');
     }
 }

@@ -13,6 +13,8 @@
                             {{ session('status') }}
                         </div>
                     @endif
+                        <a href="{{ route('product.index') }}" class="btn btn-secondary">Manage Product</a>
+
                 </div>
             </div>
         </div>
